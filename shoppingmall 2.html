@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+    <head>
+        <!-- Webpage Title -->
+        <title> 장민영 1주차 숙제</title>
+
+        <!-- Required meta tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+              integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+              crossorigin="anonymous">
+
+         <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+
+        <!-- 구글폰트 -->
+        <link href="https://fonts.googleapis.com/css2?family=Cute+Font&family=Gamja+Flower&family=Hi+Melody&display=swap"
+              rel="stylesheet">
+
+        <!-- style -->
+        <style type="text/css">
+
+            * {
+                font-family: 'Cute Font', sans-serif;
+            }
+
+            .block {
+                margin: 0 auto;
+                width: 400px;
+                height: 300px;
+                background-image: url('https://biria.com/sites/default/files/styles/1440x960/public/slider-gallery/citi.jpg?itok=pqxUzaww');
+                text-align: center;
+                background-size: cover;
+                border-radius: 10px;
+            }
+
+            .wrap {
+                font-family: 'Cute Font', sans-serif;
+                width: 900px;
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            .user-info {
+                font-family: 'Cute Font', sans-serif;
+                width: 300px;
+                text-align: center;
+                margin: 0 auto;
+            }
+
+            .exchange-info{
+                color: royalblue;
+            }
+
+        </style>
+        <script type="text/javascript">
+
+            $(document). ready(function() {
+                $('#orders-box').html('');
+                showExchange();
+                showOrders();
+            });
+
+            function order() {
+                let name = $('#order-name').val();
+                let count = $('#order-count').val();
+                let address = $('#order-address').val();
+                let phone = $('#order-phone').val();
+
+                if (name == '') {
+                    alert('이름을 입력해주세요')
+                    $('#order-name').focus()
+                    return
+                } else if (count == '') {
+                    alert('수량을 입력해주세요')
+                    $('#order-count').focus()
+                    return
+                } else if (address == '') {
+                    alert('주소를 입력해주세요')
+                    $('#order-address').focus()
+                    return
+                } else if (phone == '') {
+                    alert('전화번호를 입력해주세요')
+                    $('#order-phone').focus()
+                    return
+                } else if (!isCellPhone(phone)){
+                    alert('휴대폰번호 입력 방식이 틀립니다.\n 010-0000-0000으로 입력하세요.')
+                    return
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "http://spartacodingclub.com/order",
+                    data: {name_give:name, count_give:count, address_give:address, phone_give:phone},
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            alert('주문완료!');
+                            window.location.reload();
+                        }
+                    }
+                })
+            }
+
+            function isCellPhone(p) {
+                let regExp = /^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})[-][0-9]{3,4}[-][0-9]{4}$/;
+                return regExp.test(p);
+            }
+
+            function showOrders() {
+                $.ajax({
+                    type: "GET",
+                    url: "/order",
+                    data: {},
+                    success: function(response) {
+                        if (response['result'] == 'success'){
+                            let orders = response['orders'];
+                            console.log(orders);
+                            for (let i = 0; i < orders.length; i++) {
+                                makeOrderRow(orders[i]['name'],orders[i]['count'],orders[i]['address'],orders[i]['phone'])
+                            }
+                        } else {
+                            alert('주문을 받아오지 못했습니다');
+                        }
+                    }
+                })
+            }
+
+
+            function showExchange() {
+                $.ajax({
+                    type:"GET",
+                    url:"https://api.manana.kr/exchange/rate.json",
+                    data: {},
+                    success: function (response){
+                        for(let i = 0; i < response.length; i++){
+                            if(response[i]['name'] == 'USDKRW=X'){
+                                $('#exchange').text(response[i]['rate']);
+                                return;
+                            }
+                        }
+                    }
+                })
+
+            }
+         //==$0
+
+
+
+        </script>
+    </head>
+
+
+
+    <body>
+        <div class="wrap">
+            <div class="block"
+                 src="https://biria.com/sites/default/files/styles/1440x960/public/slider-gallery/citi.jpg?itok=pqxUzaww"
+                 alt="bicycle">
+            </div>
+
+            <h1> 인싸가 되고싶은 그대, 이걸 타고 한강에 나가버렷! </h1>
+            <h2> 가격 : 350,000 만원 </h2>
+            <p> 영국 클래식로드의 다이아몬드 프레임이 주는 전통적인 아름다움과 현대의 테크놀리지가 <br> 고급스럽게 조화되어 자전거 본연의 기능을 넘어 스타일리시함까지 갖춘 클래식 로드바이크
+                입니다. </p>
+            <div class = "exchange-info">
+                "달러,원 환율 : "
+                <span id ="exchange"> 1195.7</span>
+            </div>
+        </div>
+
+
+        <div class="user-info">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">주문자 성함 :</span>
+                </div>
+                <input type="text" class="form-control" id="order-name" placeholder="성함을 적어주세요"
+                       aria-describedby="basic-addon1">
+            </div>
+
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="order-count">수량</label>
+                </div>
+                <select class="custom-select" id="order-count">
+                    <option selected value>수량을 골라주세요</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                    <option value="4">Four</option>
+                    <option value="5">Five</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> 주소 : </span>
+                </div>
+                <input type="text" class="form-control" id="order-address" placeholder="주소를 정확히 기입해주세요"
+                       aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> 전화번호 : </span>
+                </div>
+                <input type="text" class="form-control" id="order-phone" placeholder="연락을 받으실 번호를 적어주세요"
+                       aria-describedby="basic-addon1">
+            </div>
+            <div class = "order">
+               <button onclick="order()" type="button" class="btn btn-primary">주문하기</button>
+            </div>
+        </div>
+
+    </body>
+
+
+</html>
